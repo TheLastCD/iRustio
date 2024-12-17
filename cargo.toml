@@ -1,0 +1,15 @@
+[package]
+name = "pyradion_rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["Your Name"]
+
+[dependencies]
+
+
+mpv = "0.2.3" # For media playback
+termion = "4.0.3" # For terminal input and output
+
+rand = "0.8.4"
+
+

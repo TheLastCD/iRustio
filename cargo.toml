@@ -11,5 +11,6 @@ mpv = "0.2.3" # For media playback
 termion = "4.0.3" # For terminal input and output
 
 rand = "0.8.4"
+radiobrowser = "0.6.1"
 
 

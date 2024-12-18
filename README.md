@@ -18,9 +18,7 @@ TODO
 -[x] Produce a working radion stream using the RadioBrowser API
 
 -[x] Enable name querying for available streams
-
 -[] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted
-
 -[] Add support for browsing available tags
 
 -[] Add support for user favourites
@@ -50,5 +48,5 @@ RadioBrowser:
 * https://www.radio-browser.info/
 
 Termusic:
-*Future create module that can be incuded with Termusic
-*https://github.com/tramhao/termusic
+* Future create module that can be incuded with Termusic
+* https://github.com/tramhao/termusic

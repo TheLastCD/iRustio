@@ -49,4 +49,5 @@ RadioBrowser:
 
 Termusic:
 * Future create module that can be incuded with Termusic
+* Initial Idea 
 * https://github.com/tramhao/termusic

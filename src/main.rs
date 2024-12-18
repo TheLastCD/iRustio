@@ -1,11 +1,17 @@
 
+mod getters;
+use crate::getters::{get_top_stations,
+                    get_stations_by_tag,
+                    get_stations_by_name,
+                    get_presets,
+                    get_tags,
+                };
 
 use std::process::Command;
 
-
 use radiobrowser::blocking::RadioBrowserAPI;
-use radiobrowser::{ApiStation, ApiTag };
-use radiobrowser::{StationOrder,TagOrder};
+use radiobrowser::{ApiStation};
+
 use std::error::Error;
 
 fn create_api_instance() -> Result<RadioBrowserAPI, Box<dyn Error>>{
@@ -14,71 +20,7 @@ fn create_api_instance() -> Result<RadioBrowserAPI, Box<dyn Error>>{
     Ok(RadioBrowserAPI::new()?)
 }
  
-fn get_top_stations(api: &RadioBrowserAPI) -> Result<Vec<ApiStation>, Box<dyn Error>>{
-    
 
-    let stations = api.get_stations()
-        .limit("100")
-        .order(StationOrder::Clickcount)
-        .send()?;
-
-    Ok(stations)
-}
-
-
-fn get_stations_by_name(api: &RadioBrowserAPI, query: &String) -> Result<Vec<ApiStation>, Box<dyn Error>>{
-
-
-    let stations = api.get_stations()
-        .name(query)
-        .limit("100") // arbitary just here incase query is too generic
-        .order(StationOrder::Votes)
-        .send()?;
-
-    Ok(stations)
-}
-
-
-
-fn get_presets(api: &RadioBrowserAPI, presets: &[&str]) -> Result<Vec<ApiStation>, Box<dyn std::error::Error>> {
-
-    let mut stations: Vec<ApiStation> = Vec::with_capacity(presets.len());
-    for &preset in presets{
-        let station = api.get_stations()
-        .name(preset)
-        .name_exact(true)
-        .order(StationOrder::Clickcount)
-        .send()?;
-        stations.push(station[0].clone());
-    }
-
-
-    Ok(stations)
-}
-
-
-fn get_stations_by_tag(api: &RadioBrowserAPI, query: &String) -> Result<Vec<ApiStation>, Box<dyn Error>>{
-
-
-    let stations = api.get_stations()
-        .tag(query)
-        .limit("100") // arbitary just here incase query is too generic
-        .order(StationOrder::Votes)
-        .send()?;
-
-    Ok(stations)
-}
-
-fn get_tags(api: &RadioBrowserAPI, limit: &str) -> Result<Vec<ApiTag>, Box<dyn Error>>{
-    let tags = api.get_tags()
-        .order(TagOrder::StationCount)
-        .reverse(true)
-        .limit("30") // replace with dynamic 
-        .send()?;
-
-    Ok(tags)
-    
-}
 
 
 fn station_select(stations: Vec<ApiStation>){
@@ -123,7 +65,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let preset_list = vec![
         "NTS Radio 1",
         "BBC Radio 1",
-        "Naim Radio [lossless flac]",
+        "Radio Paradise",
         "Capital FM London",
         "Radio X"
     ];
@@ -138,6 +80,8 @@ fn main() -> Result<(), Box<dyn Error>> {
                 println!("1. Select preset station");
                 println!("2. Search station by name");
                 println!("3. Search tags");
+                println!("4. Search top 100 stations");
+                println!("5. exit");
         
                 let mut input = String::new();
                 std::io::stdin().read_line(&mut input).expect("Failed to read input");
@@ -145,7 +89,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         
                 match input {
                     "1" => {
-                        
+
                         station_select(preset_stations.clone());
                     }
                     "2" => {
@@ -155,11 +99,39 @@ fn main() -> Result<(), Box<dyn Error>> {
                     
                     }
                     "3" =>{
-                        let tags = get_tags(api_ref);
+
+                        let tags = get_tags(api_ref, "30")?;
+
+                        // Print tags with their indices
+                        for (index, tag) in tags.iter().enumerate() {
+                            println!("{}: {}", index + 1, tag.name);
+                        }
+
+                        println!("Enter the number of the tag you want to search:");
                         
-                        
+                        // Read user input
+                        let mut input = String::new();
+                        std::io::stdin().read_line(&mut input)
+                            .expect("Failed to read input");
+
+                        // Parse input and handle potential errors
+                        match input.trim().parse::<usize>() {
+                            Ok(num) if num > 0 && num <= tags.len() => {
+                                let stations = get_stations_by_tag(api_ref, &tags[num - 1].name)?;
+                                station_select(stations);
+                            }
+                            _ => {
+                                println!("Invalid input");
+                            }
+                        }
+
                     } 
-                    "4"=> break,
+                    "4" => {
+                        let stations =get_top_stations(api_ref)?;
+                        station_select(stations);
+
+                    }
+                    "5" => break,
                     _ => println!("Invalid option"),
                 }
             }

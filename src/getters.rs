@@ -45,7 +45,6 @@ pub fn get_presets(
             .send()?;
         stations.push(station[0].clone());
     }
-
     Ok(stations)
 }
 

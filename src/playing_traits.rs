@@ -3,6 +3,11 @@ use radiobrowser::ApiStation;
 use crate::structs::ApiStationShort;
 use std::process::Command;
 use std::error::Error;
+
+/*
+    Play trait used to allow the playing of stations despite being 2 different datatypes
+    implements the play_station function
+ */
 pub trait Play {
     fn play_station(&self)-> Result<(), Box<dyn Error>>;
 }
@@ -34,6 +39,11 @@ impl Play for ApiStation {
     }
 }
 
+
+/*
+    Play trait used to allow the selection process of stations despite being 2 different datatypes
+    implements the station_select function  
+*/
 pub trait Selecting {
     fn station_select(&self) -> Result<(), Box<dyn Error>>;
 }

@@ -19,9 +19,10 @@ TODO
 
 -[x] Enable name querying for available streams
 
--[] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted
+-[x] Add support for browsing available tags
 
--[] Add support for browsing available tags
+-[] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted **in Progress**
+
 
 -[] Add support for user favourites
 

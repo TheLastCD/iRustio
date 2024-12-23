@@ -4,6 +4,7 @@ mod getters;
 mod playing_traits;
 mod structs;
 mod query;  
+mod preset;
 
 use crate::api_utils::create_api_instance;
 use crate::config::load_or_initialize;
@@ -22,8 +23,11 @@ fn main() -> Result<(), Box<dyn Error>> {
         //Pass api instance if we can successfully connect
         Ok(api) => {
             let api_ref = &api; //create pointer reference, probably unecassery
-                                //let preset_stations = get_presets(api_ref, &preset_list)?;
-            let config = load_or_initialize();
+            
+            // load or create our config, this stores certain station data ie presets, this increases speed from user perspective
+            let config = load_or_initialize(); 
+            
+            //grab the station presets from the config file and 
             let preset_stations = config.unwrap().station_presets;
             loop {
                 println!("Select an option:");

@@ -18,7 +18,9 @@ TODO
 -[x] Produce a working radion stream using the RadioBrowser API
 
 -[x] Enable name querying for available streams
+
 -[] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted
+
 -[] Add support for browsing available tags
 
 -[] Add support for user favourites
@@ -35,7 +37,7 @@ TODO
 -[] Speed up API calls where possible
 
 
-# Inspiation and Sources
+# Inspiration and Sources
 
 radion and pyradion:
 * used for base code outline and use of MPV and initial idea

@@ -2,27 +2,12 @@ use crate::api_utils::create_api_instance;
 use crate::getters::get_presets;
 use crate::structs::ApiStationShort;
 use serde::{Deserialize, Serialize};
-use std::collections::hash_map::DefaultHasher;
-use std::hash::{Hash, Hasher};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StationConfigCache {
     date: String,
     pub station_presets: Vec<ApiStationShort>,
     pub recents: Option<Vec<ApiStationShort>>,
-}
-
-impl Hash for StationConfigCache {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.station_presets.hash(state);
-        self.recents.hash(state)
-    }
-}
-
-fn calc_hash<T: Hash>(t: &T) -> u64 {
-    let mut hasher = DefaultHasher::new();
-    t.hash(&mut hasher);
-    hasher.finish()
 }
 
 static DEFAULT_PRESETS: [&str; 5] = [
@@ -94,4 +79,4 @@ pub fn load_or_initialize() -> Result<StationConfigCache, Box<dyn std::error::Er
     }
 }
 
-pub fn update() -> Result<StationConfigCache, Box<dyn std::error::Error>> {}
+//pub fn update() -> Result<StationConfigCache, Box<dyn std::error::Error>> {}

@@ -2,13 +2,13 @@ use radiobrowser::ApiStation;
 
 use crate::structs::ApiStationShort;
 use std::process::Command;
-
+use std::error::Error;
 pub trait Play {
-    fn play_station(&self);
+    fn play_station(&self)-> Result<(), Box<dyn Error>>;
 }
 
 impl Play for ApiStationShort {
-    fn play_station(&self) {
+    fn play_station(&self)-> Result<(), Box<dyn Error>> {
         //mpv player function, accepts
         println!("Playing station: {}", self.station_name);
         println!("URL: {}", self.station_url);
@@ -16,11 +16,12 @@ impl Play for ApiStationShort {
             .arg(self.station_url.clone())
             .spawn()
             .expect("Failed to spawn mpv process");
+        Ok(()) 
     }
 }
 
 impl Play for ApiStation {
-    fn play_station(&self) {
+    fn play_station(&self)-> Result<(), Box<dyn Error>> {
         //mpv player function, accepts
         println!("Playing station: {}", self.name);
         println!("URL: {}", self.url);
@@ -29,15 +30,16 @@ impl Play for ApiStation {
             .arg(self.url.clone())
             .spawn()
             .expect("Failed to spawn mpv process");
+        Ok(())
     }
 }
 
 pub trait Selecting {
-    fn station_select(&self);
+    fn station_select(&self) -> Result<(), Box<dyn Error>>;
 }
 
 impl Selecting for Vec<ApiStationShort> {
-    fn station_select(&self) {
+    fn station_select(&self) -> Result<(), Box<dyn Error>>{
         //segement for selecting stations from a given list
 
         for (index, station) in self.iter().enumerate() {
@@ -50,17 +52,19 @@ impl Selecting for Vec<ApiStationShort> {
             .expect("Failed to read input");
         match input.trim().parse::<usize>() {
             Ok(num) if num > 0 && num <= self.len() => {
-                self[num - 1].play_station();
+                let _ = self[num - 1].play_station();
+                Ok(())
             }
             _ => {
-                print!("Invalid Input")
+                print!("Invalid Input");
+                Ok(())
             }
         }
     }
 }
 
 impl Selecting for Vec<ApiStation> {
-    fn station_select(&self) {
+    fn station_select(&self) -> Result<(), Box<dyn Error>> {
         //segement for selecting stations from a given list
 
         for (index, station) in self.iter().enumerate() {
@@ -73,10 +77,12 @@ impl Selecting for Vec<ApiStation> {
             .expect("Failed to read input");
         match input.trim().parse::<usize>() {
             Ok(num) if num > 0 && num <= self.len() => {
-                self[num - 1].play_station();
+                let _ = self[num - 1].play_station();
+                Ok(())
             }
             _ => {
-                print!("Invalid Input")
+                print!("Invalid Input");
+                Ok(())
             }
         }
     }

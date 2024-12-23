@@ -3,28 +3,19 @@ mod config;
 mod getters;
 mod playing_traits;
 mod structs;
+mod query;  
 
 use crate::api_utils::create_api_instance;
 use crate::config::load_or_initialize;
 use crate::getters::{
-    get_countries, get_stations_by_name, get_stations_by_tag, get_tags, get_top_stations,
+    get_countries, get_stations_by_name, get_tags, get_top_stations,
 };
+use crate::query::{generic_query,Query};
 
 use crate::playing_traits::Selecting;
 
 use std::error::Error;
 
-fn generic_query() -> String {
-    // not elegant, needs better handling of return within the confines of rust
-    let mut station_query = String::new();
-    println!("Enter the station name:");
-    std::io::stdin()
-        .read_line(&mut station_query)
-        .expect("Failed to read input");
-
-    let station_query = station_query.trim();
-    station_query.to_string()
-}
 
 fn main() -> Result<(), Box<dyn Error>> {
     match create_api_instance() {
@@ -50,70 +41,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                 match input {
                     "1" => {
-                        preset_stations.station_select();
+                        let _ = preset_stations.station_select();
                     }
                     "2" => {
                         let stations = get_stations_by_name(api_ref, &generic_query())?;
-                        stations.station_select();
+                        let _ = stations.station_select();
                     }
                     "3" => {
                         let tags = get_tags(api_ref, "30")?;
+                        let _ = tags.category_query(api_ref);
 
-                        // Print tags with their indices
-                        for (index, tag) in tags.iter().enumerate() {
-                            println!("{}: {}", index + 1, tag.name);
-                        }
-
-                        println!("Enter the number of the tag you want to search:");
-
-                        // Read user input
-                        let mut input = String::new();
-                        std::io::stdin()
-                            .read_line(&mut input)
-                            .expect("Failed to read input");
-
-                        // Parse input and handle potential errors
-                        match input.trim().parse::<usize>() {
-                            Ok(num) if num > 0 && num <= tags.len() => {
-                                let stations = get_stations_by_tag(api_ref, &tags[num - 1].name)?;
-                                stations.station_select();
-                            }
-                            _ => {
-                                println!("Invalid input");
-                            }
-                        }
                     }
                     "4" => {
                         let stations = get_top_stations(api_ref)?;
-                        stations.station_select();
+                        let _ = stations.station_select();
                     }
                     "5" => {
                         let countries = get_countries(api_ref, "30")?;
-                        //let test: Box<dyn Processable> = Box::new(countries);
-                        // Print tags with their indices
-                        //for (index, tag) in countries.iter().enumerate() {
-                        //    println!("{}: {}", index + 1, tag.name);
-                        //}
+                        let _ = countries.category_query(api_ref);
 
-                        //println!("Enter the number of the tag you want to search:");
-
-                        // Read user input
-                        //let mut input = String::new();
-                        //std::io::stdin()
-                        //    .read_line(&mut input)
-                        //    .expect("Failed to read input");
-
-                        // Parse input and handle potential errors
-                        //match input.trim().parse::<usize>() {
-                        //    Ok(num) if num > 0 && num <= countries.len() => {
-                        //        let stations =
-                        //            get_stations_by_country(api_ref, &countries[num - 1].name)?;
-                        //        station_select(stations);
-                        //    }
-                        //    _ => {
-                        //        println!("Invalid input");
-                        //    }
-                        //}
                     }
 
                     "6" => break,

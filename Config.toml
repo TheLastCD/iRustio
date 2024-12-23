@@ -1,0 +1,26 @@
+date = "01/01/1970"
+
+[[station_presets]]
+station_name = "NTS Radio 1"
+station_url = "http://stream-relay-geo.ntslive.net/stream"
+last_checked = "01/01/1970"
+
+[[station_presets]]
+station_name = "BBC Radio 1"
+station_url = "http://as-hls-ww-live.akamaized.net/pool_904/live/ww/bbc_radio_one/bbc_radio_one.isml/bbc_radio_one-audio%3d96000.norewind.m3u8"
+last_checked = "01/01/1970"
+
+[[station_presets]]
+station_name = "Radio Paradise"
+station_url = "http://stream-uk1.radioparadise.com/aac-64"
+last_checked = "01/01/1970"
+
+[[station_presets]]
+station_name = "Capital FM London"
+station_url = "http://media-ice.musicradio.com/CapitalMP3"
+last_checked = "01/01/1970"
+
+[[station_presets]]
+station_name = "Radio X"
+station_url = "https://media-ssl.musicradio.com/RadioXLondonMP3"
+last_checked = "01/01/1970"

@@ -9,10 +9,18 @@ authors = ["The Last CD"]
 
 mpv = "0.2.3" # For media playback
 termion = "4.0.3" # For terminal input and output
+chrono = { version = "0.4", optional = true}
 futures =  "0.3.31"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+toml = "0.5"
 rand = "0.8.4"
 radiobrowser = "0.6.1"
+
+
+
+[features]
+default = []  # Default features can be defined here
+chrono = ["dep:chrono"]
 
 

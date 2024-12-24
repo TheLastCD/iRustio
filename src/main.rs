@@ -18,6 +18,7 @@ use crate::playing_traits::Selecting;
 
 use std::error::Error;
 use chrono::Utc;
+use structs::ApiStationShort;
 
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -34,10 +35,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             loop {
                 println!("Select an option:");
                 println!("1. Select preset station");
-                println!("2. Search station by name");
-                println!("3. Search tags");
-                println!("4. Search top 100 stations");
-                println!("5. Search country");
+                println!("2. Show recently played stations");
+                println!("3. Search station by name");
+                println!("4. Search tags");
+                println!("5. Search top 100 stations");
+                println!("6. Search country");
 
                 let mut input = String::new();
                 std::io::stdin()
@@ -50,32 +52,40 @@ fn main() -> Result<(), Box<dyn Error>> {
                         let _ = config.station_presets.station_select();
                     }
                     "2" => {
+
+                        let limit = 10;
+                        let start_index = config.recents.len().saturating_sub(limit);
+                        let recent_slice: Vec<ApiStationShort> = config.recents[start_index..].to_vec();
+                        let _ = recent_slice.station_select();
+                    }
+
+                    "3" =>{
                         let stations = get_stations_by_name(api_ref, &generic_query())?;
-                        config.update(
-                            &convert_station_2_short(
-                                &stations,
-                                &Utc::now().to_string()
-                            )
-                        );
-                        config.save();
+                        // config.update(
+                        //     &convert_station_2_short(
+                        //         &stations,
+                        //         &Utc::now().to_string()
+                        //     )
+                        // );
+                        // config.save();
                         let _ = stations.station_select();
                     }
-                    "3" => {
+                    "4" => {
                         let tags = get_tags(api_ref, "30")?;
                         let _ = tags.category_query(api_ref);
 
                     }
-                    "4" => {
+                    "5" => {
                         let stations = get_top_stations(api_ref)?;
                         let _ = stations.station_select();
                     }
-                    "5" => {
+                    "6" => {
                         let countries = get_countries(api_ref, "30")?;
                         let _ = countries.category_query(api_ref);
 
                     }
 
-                    "6" => {
+                    "7" => {
                         config.save();
                         break},
                     _ => println!("Invalid option"),

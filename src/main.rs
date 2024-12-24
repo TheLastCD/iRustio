@@ -7,15 +7,17 @@ mod query;
 mod preset;
 
 use crate::api_utils::create_api_instance;
-use crate::config::load_or_initialize;
+use crate::config::{load_or_initialize, ConfigCycle};
 use crate::getters::{
     get_countries, get_stations_by_name, get_tags, get_top_stations,
 };
+use crate::structs::convert_station_2_short;
 use crate::query::{generic_query,Query};
 
 use crate::playing_traits::Selecting;
 
 use std::error::Error;
+use chrono::Utc;
 
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -25,10 +27,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             let api_ref = &api; //create pointer reference, probably unecassery
             
             // load or create our config, this stores certain station data ie presets, this increases speed from user perspective
-            let config = load_or_initialize(); 
+            let mut config = load_or_initialize().unwrap(); 
             
             //grab the station presets from the config file and 
-            let preset_stations = config.unwrap().station_presets;
+            // let preset_stations = config.station_presets;
             loop {
                 println!("Select an option:");
                 println!("1. Select preset station");
@@ -45,10 +47,17 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                 match input {
                     "1" => {
-                        let _ = preset_stations.station_select();
+                        let _ = config.station_presets.station_select();
                     }
                     "2" => {
                         let stations = get_stations_by_name(api_ref, &generic_query())?;
+                        config.update(
+                            &convert_station_2_short(
+                                &stations,
+                                &Utc::now().to_string()
+                            )
+                        );
+                        config.save();
                         let _ = stations.station_select();
                     }
                     "3" => {
@@ -66,7 +75,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
                     }
 
-                    "6" => break,
+                    "6" => {
+                        config.save();
+                        break},
                     _ => println!("Invalid option"),
                 }
             }

@@ -61,18 +61,18 @@ impl Default for StationConfigCache {
     }
 }
 pub trait ConfigCycle{
-    fn update(&mut self, incoming: &Vec<ApiStationShort>);
+    fn update(&mut self, incoming: &[ApiStationShort]);
     fn save(&self);
 }
 
 // -> Result<StationConfigCache, Box<dyn std::error::Error>> 
 impl ConfigCycle for StationConfigCache{
-    fn update(&mut self,incoming: &Vec<ApiStationShort>){
+    fn update(&mut self,incoming: &[ApiStationShort]){
         self.recents = update_recents(500, &mut self.recents, incoming);
     }
     fn save(&self){
         let config_path = Path::new(CONFIG_NAME);
-        let write_result = config_write(&config_path, &self);
+        let write_result = config_write(config_path, self);
         if let Err(e) = write_result {
             println!("Failed to write file: {}", e);
         }

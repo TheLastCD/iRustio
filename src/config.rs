@@ -61,21 +61,20 @@ impl Default for StationConfigCache {
     }
 }
 pub trait ConfigCycle{
-    fn update(&mut self, incoming: &Vec<ApiStationShort>);
+    fn update(&mut self, incoming: &[ApiStationShort]);
     fn save(&self);
 }
 
 // -> Result<StationConfigCache, Box<dyn std::error::Error>> 
 impl ConfigCycle for StationConfigCache{
-    fn update(&mut self,incoming: &Vec<ApiStationShort>){
+    fn update(&mut self,incoming: &[ApiStationShort]){
         self.recents = update_recents(500, &mut self.recents, incoming);
     }
     fn save(&self){
         let config_path = Path::new(CONFIG_NAME);
-        let write_result = config_write(&config_path, &self);
-        match write_result {
-            Err(e) => println!("Failed to write file: {}", e),
-            Ok(_) => (),
+        let write_result = config_write(config_path, self);
+        if let Err(e) = write_result {
+            println!("Failed to write file: {}", e);
         }
     }
 
@@ -90,8 +89,8 @@ Private Functions
 fn default_preset_return() -> Result<Vec<ApiStationShort>, Box<dyn std::error::Error>> {
     match create_api_instance() {
         Ok(tmp_api) => {
-            let api_ref = &tmp_api;
-            let defaults = &get_presets(&api_ref, &DEFAULT_PRESETS)?;
+
+            let defaults = &get_presets(&tmp_api, &DEFAULT_PRESETS)?;
             let station_list = convert_station_2_short
                 (
                     defaults, 
@@ -128,7 +127,7 @@ fn config_write(config_path: &Path, config: &StationConfigCache) -> Result<(), B
     
 }
 
-fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &Vec<ApiStationShort>)-> Vec<ApiStationShort>{
+fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &[ApiStationShort])-> Vec<ApiStationShort>{
     let combined_len = cache.len() + addition.len();
     if combined_len > limit{
         print!("removing first recents");
@@ -161,10 +160,9 @@ pub fn load_or_initialize() -> Result<StationConfigCache, Box<dyn std::error::Er
 
         let config = StationConfigCache::default();
         
-        let write_result = config_write(&config_path, &config);
-        match write_result {
-            Err(e) => println!("Failed to write file: {}", e),
-            Ok(_) => (),
+        let write_result = config_write(config_path, &config);
+        if let Err(e) = write_result {
+            println!("Failed to write file: {}", e);
         }
 
         Ok(config)

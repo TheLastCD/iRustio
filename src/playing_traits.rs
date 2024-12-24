@@ -17,10 +17,12 @@ impl Play for ApiStationShort {
         //mpv player function, accepts
         println!("Playing station: {}", self.station_name);
         println!("URL: {}", self.station_url);
-        let _ = Command::new("mpv")
+        let mut instance = Command::new("mpv")
             .arg(self.station_url.clone())
             .spawn()
             .expect("Failed to spawn mpv process");
+        
+        wait_for_child(&mut instance)?;
         Ok(()) 
     }
 }
@@ -31,10 +33,12 @@ impl Play for ApiStation {
         println!("Playing station: {}", self.name);
         println!("URL: {}", self.url);
 
-        let _ = Command::new("mpv")
+        let mut instance = Command::new("mpv")
             .arg(self.url.clone())
             .spawn()
             .expect("Failed to spawn mpv process");
+
+        wait_for_child(&mut instance)?;
         Ok(())
     }
 }
@@ -95,5 +99,15 @@ impl Selecting for Vec<ApiStation> {
                 Ok(())
             }
         }
+    }
+}
+
+fn wait_for_child(child: &mut std::process::Child) -> Result<std::process::ExitStatus, Box<dyn Error>> {
+    let status = child.wait()?;
+    
+    if status.success() {
+        Ok(status)
+    } else {
+        Err(format!("Child process exited with status: {}", status).into())
     }
 }

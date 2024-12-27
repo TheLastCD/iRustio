@@ -10,38 +10,69 @@ use std::error::Error;
  */
 pub trait Play {
     fn play_station(&self)-> Result<(), Box<dyn Error>>;
+
 }
 
+
+
 impl Play for ApiStationShort {
-    fn play_station(&self)-> Result<(), Box<dyn Error>> {
-        //mpv player function, accepts
-        println!("Playing station: {}", self.station_name);
-        println!("URL: {}", self.station_url);
-        let mut instance = Command::new("mpv")
-            .arg(self.station_url.clone())
-            .spawn()
-            .expect("Failed to spawn mpv process");
-        
-        wait_for_child(&mut instance)?;
-        Ok(()) 
+    fn play_station(&self) -> Result<(), Box<dyn Error>> {
+        play("mpv", &self.station_name, &self.station_url)
     }
 }
 
 impl Play for ApiStation {
-    fn play_station(&self)-> Result<(), Box<dyn Error>> {
-        //mpv player function, accepts
-        println!("Playing station: {}", self.name);
-        println!("URL: {}", self.url);
-
-        let mut instance = Command::new("mpv")
-            .arg(self.url.clone())
-            .spawn()
-            .expect("Failed to spawn mpv process");
-
-        wait_for_child(&mut instance)?;
-        Ok(())
+    fn play_station(&self) -> Result<(), Box<dyn Error>> {
+        play("mpv", &self.name, &self.url)
     }
 }
+// Common play logic
+
+fn play(player: &str, name: &str, url: &str) -> Result<(), Box<dyn Error>> {
+    println!("Playing station: {}", name);
+    println!("URL: {}", url);
+
+    let mut instance = Command::new(player)
+        .arg(url)
+        .spawn()
+        .expect("Failed to spawn mpv process");
+
+    wait_for_child(&mut instance)?;
+    Ok(())
+}
+
+
+
+// impl Play for ApiStationShort {
+//     fn play_station(&self)-> Result<(), Box<dyn Error>> {
+//         //mpv player function, accepts
+//         println!("Playing station: {}", self.station_name);
+//         println!("URL: {}", self.station_url);
+//         let mut instance = Command::new("mpv")
+//             .arg(self.station_url.clone())
+//             .spawn()
+//             .expect("Failed to spawn mpv process");
+        
+//         wait_for_child(&mut instance)?;
+//         Ok(()) 
+//     }
+// }
+
+// impl Play for ApiStation {
+//     fn play_station(&self)-> Result<(), Box<dyn Error>> {
+//         //mpv player function, accepts
+//         println!("Playing station: {}", self.name);
+//         println!("URL: {}", self.url);
+
+//         let mut instance = Command::new("mpv")
+//             .arg(self.url.clone())
+//             .spawn()
+//             .expect("Failed to spawn mpv process");
+
+//         wait_for_child(&mut instance)?;
+//         Ok(())
+//     }
+// }
 
 
 /*

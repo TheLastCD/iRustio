@@ -20,21 +20,23 @@ impl Backend for MpvHandler{
     
     fn events(&mut self) {
         'main: loop {
-            while let Some(event) = self.wait_event(0.0) {
-                // even if you don't do anything with the events, it is still necessary to empty
+            while let Some(event) = self.wait_event(1.0) {
 
-                //println!("RECEIVED EVENT : {:?}", event);
+                println!("RECEIVED EVENT : {:?}", event);
                 match event {  
                     //TODO provide correct logging
                     mpv::Event::Shutdown | mpv::Event::Idle => {
+                        println!("Hello");
                         break 'main;
                     }
                     _ => {}
                 };
                 //if user enter q quit
                 if let Some('q') = get_char_input() {
+
                     println!("Stopping playback...");
-                    break 'main;
+                    self.end();
+                    // break 'main;
                 }
             }
         }

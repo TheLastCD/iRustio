@@ -19,7 +19,6 @@ impl Backend for gstlib::Element{
     }
     fn end(&mut self){
         self.set_state(gstlib::State::Null).unwrap();
-        // self.set_property("stop", true);
     }
     
     fn events(&mut self) {
@@ -50,11 +49,30 @@ impl Backend for gstlib::Element{
             // Process pending messages
             bus.timed_pop(gstlib::ClockTime::from_mseconds(100));
     
-            // Check for user input to quit
-            if let Some('q') = get_char_input() {
-                println!("Stopping playback...");
-                self.end();
-                break; // Exit the loop
+            println!("use q to quit & P to play/pause");
+            let button = get_char_input().unwrap().to_string();
+            match button.trim(){
+                "q" =>{
+                    println!("Stopping playback...");
+                    self.end();
+
+                }
+                "p" =>{
+
+                    if self.current_state() == gstlib::State::Paused {
+                        println!("Resuming Playback...");
+                        self.play();
+                    }
+                    else{
+                        println!("Pausing Playback...");
+                        self.pause();
+                    }
+
+                }
+                _ =>{
+                    
+                }
+
             }
         }
     }
@@ -80,6 +98,7 @@ pub fn gst_play(url: &str){
 
 fn gst_init() -> gstlib::Element{
     gstlib::init().unwrap();
+    
     // Create the pipeline using playbin
     gstlib::ElementFactory::make("playbin").build().unwrap()
 }

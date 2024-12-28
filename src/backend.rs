@@ -12,11 +12,11 @@ pub trait Backend{
     fn events(&mut self);
 }
 
-struct BackendState{
-    pub paused: bool,
-    pub current_url: String,
+// struct BackendState{
+//     pub paused: bool,
+//     pub current_url: String,
     
-} 
+// } 
 
 
 

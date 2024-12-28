@@ -32,13 +32,33 @@ impl Backend for MpvHandler{
                 };
 
             }
-            //if user enter q quit
-            if let Some('q') = get_char_input() {
 
-                println!("Stopping playback...");
-                self.end();
-                // break 'main;
+            println!("use q to quit & P to play/pause");
+            let button = get_char_input().unwrap().to_string();
+            match button.trim(){
+                "q" =>{
+                    println!("Stopping playback...");
+                    self.end();
+                    // break 'main;
+
+                }
+                "p" =>{
+                    if self.get_property("pause").unwrap(){
+                        println!("Resuming Playback...");
+                        self.play();
+                    }
+                    else{
+                        println!("Pausing Playback...");
+                        self.pause();
+                    }
+
+                }
+                _ =>{
+                    
+                }
+
             }
+
         }
 
 

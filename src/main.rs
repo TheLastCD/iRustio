@@ -7,8 +7,9 @@ mod query;
 mod preset;
 mod backend;
 
+
 use crate::api_utils::create_api_instance;
-use crate::config::{load_or_initialize,settings, Configurable};
+use crate::config::{load_or_initialize, Configurable};
 use crate::getters::{
     get_countries, get_stations_by_name, get_tags, get_top_stations,
 };
@@ -29,7 +30,6 @@ fn main() -> Result<(), Box<dyn Error>> {
             let api_ref = &api; //create pointer reference, probably unecassery
             
             // load or create our config, this stores certain station data ie presets, this increases speed from user perspective
-            let mut settings = settings();
             let mut config = load_or_initialize()?; 
             
             //grab the station presets from the config file and 

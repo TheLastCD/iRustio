@@ -18,26 +18,16 @@ use serde::{Deserialize, Serialize};
 // /*
 // Structs and implementations of said structs
 // */
-#[derive(Serialize,Deserialize,Debug)]
-pub struct RadioConfig{
-    backend: String,
-}
 
-impl Default for RadioConfig{
-    fn default() -> Self {
-        RadioConfig{
-            backend: "MPV".to_string(),
-        }
-    }
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct StationConfigCache {
     date: String,
+    pub backend: String,
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub station_presets: Vec<ApiStationShort>,
     #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub recents: Vec<ApiStationShort>,
+    pub recents: Vec<ApiStationShort>,   
 }
 
  
@@ -49,6 +39,7 @@ impl Default for StationConfigCache {
             date: Utc::now().to_string(),
             station_presets: default_preset_return().expect("Failed to retrieve streams"),
             recents: default_preset_return().expect("Failed to retrieve streams") , // set default favourites as recents. this avoid some toml stuff with empty recents
+            backend: "MPV".to_string(),
         }
     }
 }
@@ -66,10 +57,7 @@ pub trait Configurable {
     fn save(&self);
 }
 
-// Combine both traits into one
-// pub trait StationConfigManager: StationManager + Configurable {}
 
-// // impl StationConfigManager for StationConfigCache {}
 
 impl StationManager for ApiStation {
     fn convert_to_short(&self, date: &str) -> ApiStationShort {
@@ -112,13 +100,12 @@ impl Configurable for StationConfigCache {
     }
 
     fn save(&self) {
-        let config_path = Path::new(statics::CONFIG_NAME);
+        let config_path = Path::new(CONFIG_NAME);
         if let Err(e) = config_write(config_path, self) {
             println!("Failed to write file: {}", e);
         }
     }
 }
-
 
 
 
@@ -181,13 +168,6 @@ fn config_write(config_path: &Path, config: &StationConfigCache) -> Result<(), B
     
 }
 
-fn config_write_r(config_path: &Path, config: &RadioConfig) -> Result<(), Box<dyn std::error::Error>> {
-    
-    let toml_string = toml::to_string(&config)?;
-    fs::write(config_path, toml_string)?;
-    Ok(())
-    
-}
 
 fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &ApiStationShort)-> Vec<ApiStationShort>{
     let combined_len = cache.len() + 1;
@@ -210,10 +190,8 @@ fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &Api
 // */
 
 pub fn load_or_initialize() -> Result<StationConfigCache, Box<dyn std::error::Error>> {
-    let station_path = Path::new(statics::STATION_CACHE);
+    let station_path = Path::new(CONFIG_NAME);
     
-    
-
     if station_path.exists() {
 
         let content = fs::read_to_string(station_path);
@@ -232,24 +210,5 @@ pub fn load_or_initialize() -> Result<StationConfigCache, Box<dyn std::error::Er
     }
 
 }
-pub fn settings()-> Result<RadioConfig, Box<dyn std::error::Error>>{
-    let config_path = Path::new(CONFIG_NAME);
 
-    if config_path.exists() {
-
-        let content = fs::read_to_string(config_path);
-        let config: RadioConfig = toml::from_str(&content.unwrap())?;
-        Ok(config)
-    } else {
-
-        let config = RadioConfig::default();
-        
-        let write_result = config_write_r(config_path, &config);
-        if let Err(e) = write_result {
-            println!("Failed to write file: {}", e);
-        }
-
-        Ok(config)
-    }
-}
 

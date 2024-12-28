@@ -1,5 +1,8 @@
 use radiobrowser::ApiStation;
 
+mod statics;
+
+use crate::config::statics::*;
 use crate::api_utils::create_api_instance;
 use crate::getters::get_presets;
 use crate::structs::ApiStationShort;
@@ -9,20 +12,7 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 
-// /* 
-// Static variables for config and cache file names and Default preset list.
-// */
-static CONFIG_NAME: &str = "Config.toml";
-// static STATION_CACHE: &str = "Station_cache.toml";
 
-// default list of presets that iRustio comes with:
-static DEFAULT_PRESETS: [&str; 5] = [
-    "NTS Radio 1",
-    "BBC Radio 1",
-    "Radio Paradise",
-    "Capital FM London",
-    "Radio X",
-];
 
 
 // /*
@@ -51,7 +41,7 @@ pub struct StationConfigCache {
 }
 
  
-// //Establish default for StationConfigCache if no config.toml exists
+//Establish default for StationConfigCache if no config.toml exists
 
 impl Default for StationConfigCache {
     fn default() -> Self {
@@ -122,7 +112,7 @@ impl Configurable for StationConfigCache {
     }
 
     fn save(&self) {
-        let config_path = Path::new(CONFIG_NAME);
+        let config_path = Path::new(statics::CONFIG_NAME);
         if let Err(e) = config_write(config_path, self) {
             println!("Failed to write file: {}", e);
         }
@@ -191,6 +181,14 @@ fn config_write(config_path: &Path, config: &StationConfigCache) -> Result<(), B
     
 }
 
+fn config_write_r(config_path: &Path, config: &RadioConfig) -> Result<(), Box<dyn std::error::Error>> {
+    
+    let toml_string = toml::to_string(&config)?;
+    fs::write(config_path, toml_string)?;
+    Ok(())
+    
+}
+
 fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &ApiStationShort)-> Vec<ApiStationShort>{
     let combined_len = cache.len() + 1;
     if combined_len > limit{
@@ -212,19 +210,41 @@ fn update_recents(limit: usize, cache: &mut Vec<ApiStationShort>, addition: &Api
 // */
 
 pub fn load_or_initialize() -> Result<StationConfigCache, Box<dyn std::error::Error>> {
-    let config_path = Path::new(CONFIG_NAME);
+    let station_path = Path::new(statics::STATION_CACHE);
+    
     
 
-    if config_path.exists() {
+    if station_path.exists() {
 
-        let content = fs::read_to_string(config_path);
+        let content = fs::read_to_string(station_path);
         let config: StationConfigCache = toml::from_str(&content.unwrap())?;
         Ok(config)
     } else {
 
         let config = StationConfigCache::default();
         
-        let write_result = config_write(config_path, &config);
+        let write_result = config_write(station_path, &config);
+        if let Err(e) = write_result {
+            println!("Failed to write file: {}", e);
+        }
+
+        Ok(config)
+    }
+
+}
+pub fn settings()-> Result<RadioConfig, Box<dyn std::error::Error>>{
+    let config_path = Path::new(CONFIG_NAME);
+
+    if config_path.exists() {
+
+        let content = fs::read_to_string(config_path);
+        let config: RadioConfig = toml::from_str(&content.unwrap())?;
+        Ok(config)
+    } else {
+
+        let config = RadioConfig::default();
+        
+        let write_result = config_write_r(config_path, &config);
         if let Err(e) = write_result {
             println!("Failed to write file: {}", e);
         }

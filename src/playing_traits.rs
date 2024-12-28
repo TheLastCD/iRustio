@@ -5,6 +5,7 @@ use std::io::Write;
 
 use crate::config::{StationConfigCache,StationManager};
 use crate::backend::mpv::mpv_play;
+use crate::backend::gstreamer::gst_play;
 
 use crate::structs::ApiStationShort;
 
@@ -39,7 +40,8 @@ fn play(name: &str, url: &str) -> Result<(), Box<dyn Error>> {
     println!("Playing station: {}", name);
     println!("URL: {}", url);
 
-    mpv_play(url);
+    gst_play(url);
+    // mpv_play(url);
     
     Ok(())
 }
@@ -111,9 +113,3 @@ fn get_user_input(prompt: &str) -> Result<usize, Box<dyn Error>>
 
     input.trim().parse::<usize>().map_err(|e| e.into())
 }
-
-
-
-
-
-

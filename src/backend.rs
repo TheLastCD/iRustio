@@ -1,4 +1,5 @@
 pub mod mpv;
+pub mod gstreamer;
 
 // use std::error::Error;
 

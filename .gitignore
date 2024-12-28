@@ -1,5 +1,6 @@
 *.lock
 target/
 Config.toml
+Station_cache.toml
 .DS_Store
 .vscode/*

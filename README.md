@@ -45,6 +45,8 @@ TODO
 
 -[x] Add support for different audio backends (see above)
 
+-[] Include metadata from radio station where available
+
 -[] Speed up API calls where possible
 
 

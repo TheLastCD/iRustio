@@ -6,6 +6,7 @@ mod structs;
 mod query;  
 mod preset;
 mod backend;
+mod metadata;
 
 
 use crate::api_utils::create_api_instance;
@@ -13,6 +14,7 @@ use crate::config::{load_or_initialize, Configurable};
 use crate::getters::{
     get_countries, get_stations_by_name, get_tags, get_top_stations,
 };
+
 
 use crate::query::{generic_query,Query};
 

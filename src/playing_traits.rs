@@ -5,6 +5,8 @@ use std::io::Write;
 
 use crate::backend::{mpv::*,gstreamer::*};
 use crate::config::{StationConfigCache,StationManager};
+use crate::metadata::get_meta;
+use futures::executor::block_on;
 
 
 use crate::structs::ApiStationShort;
@@ -17,20 +19,20 @@ use std::error::Error;
     implements the play_station function
  */
 pub trait Play {
-    fn play_station(&self, config: &str)-> Result<(), Box<dyn Error>>;
+    fn play_station(&self, backend: &str)-> Result<(), Box<dyn Error>>;
 }
 
 
 
 impl Play for ApiStationShort {
-    fn play_station(&self, config: &str) -> Result<(), Box<dyn Error>> {
-        play(&self.station_name, &self.station_url, config)
+    fn play_station(&self, backend: &str) -> Result<(), Box<dyn Error>> {
+        play(&self.station_name, &self.station_url, backend)
     }
 }
 
 impl Play for ApiStation {
-    fn play_station(&self, config: &str) -> Result<(), Box<dyn Error>> {
-        play(&self.name, &self.url, config)
+    fn play_station(&self, backend: &str) -> Result<(), Box<dyn Error>> {
+        play(&self.name, &self.url, backend)
     }
 }
 
@@ -39,6 +41,10 @@ impl Play for ApiStation {
 fn play(name: &str, url: &str, backend: &str) -> Result<(), Box<dyn Error>> {
     println!("Playing station: {}", name);
     println!("URL: {}", url);
+    // get_meta(url).await?;
+
+    // Block on the future
+    // block_on(get_meta(url))?;
 
     
     if backend == "MPV"{

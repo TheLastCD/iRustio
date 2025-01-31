@@ -6,7 +6,6 @@ mod structs;
 mod query;  
 mod preset;
 mod backend;
-mod metadata;
 
 
 use crate::api_utils::create_api_instance;

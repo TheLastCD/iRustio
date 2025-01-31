@@ -5,8 +5,6 @@ use std::io::Write;
 
 use crate::backend::{mpv::*,gstreamer::*};
 use crate::config::{StationConfigCache,StationManager};
-use crate::metadata::get_meta;
-use futures::executor::block_on;
 
 
 use crate::structs::ApiStationShort;
@@ -41,10 +39,7 @@ impl Play for ApiStation {
 fn play(name: &str, url: &str, backend: &str) -> Result<(), Box<dyn Error>> {
     println!("Playing station: {}", name);
     println!("URL: {}", url);
-    // get_meta(url).await?;
 
-    // Block on the future
-    // block_on(get_meta(url))?;
 
     
     if backend == "MPV"{

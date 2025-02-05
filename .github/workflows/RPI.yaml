@@ -28,10 +28,16 @@ jobs:
     - name: Install MPV development packages
       run: sudo apt-get install -y libmpv-dev
 
-    - name: Install OpenSSL for cross-compiling
+    - name: Download OpenSSL source
       run: |
-        sudo apt-get install -y libssl-dev:aarch64
+        wget https://www.openssl.org/source/openssl-1.1.1.tar.gz
+        tar -xzf openssl-1.1.1.tar.gz
+        cd openssl-1.1.1
+        ./Configure linux-aarch64 --prefix=/usr/aarch64-linux-gnu
+        make
+        sudo make install
         echo "OPENSSL_DIR=/usr/aarch64-linux-gnu" >> $GITHUB_ENV
+
 
     - name: Install Rust
       uses: actions-rs/toolchain@v1

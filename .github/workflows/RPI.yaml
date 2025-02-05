@@ -1,0 +1,46 @@
+name: Rust Raspberry Pi Build
+
+on:
+  push:
+    branches: [ "rpi_test" ]
+  pull_request:
+    branches: [ "rpi_test" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-aarch64-linux-gnu
+
+    - name: Install GStreamer development packages
+      run: sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+
+    - name: Install MPV development packages
+      run: sudo apt-get install -y libmpv-dev
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: aarch64-unknown-linux-gnu
+        override: true
+
+    - name: Build for Raspberry Pi
+      run: |
+        rustup target add aarch64-unknown-linux-gnu
+        cargo build --target aarch64-unknown-linux-gnu --release
+
+    - name: Upload binary
+      uses: actions/upload-artifact@v2
+      with:
+        name: rpi-binary
+        path: target/aarch64-unknown-linux-gnu/release/your_binary_name

@@ -20,4 +20,7 @@ chrono = "0.4"
 reqwest = "0.12.12"
 
 
-
+[lib]
+name = "i_rustio"
+crate-type = ["cdylib", "rlib"]
+#crate-type = ["rlib", "dylib"]  # Adjust as needed

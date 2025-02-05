@@ -40,7 +40,8 @@ jobs:
         cargo build --target aarch64-unknown-linux-gnu --release
 
     - name: Upload binary
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: rpi-binary
         path: target/aarch64-unknown-linux-gnu/release/your_binary_name
+

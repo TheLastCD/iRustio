@@ -1,12 +1,4 @@
-mod api_utils;
-mod config;
-mod getters;
-mod playing_traits;
-mod structs;
-mod query;  
-mod preset;
-mod backend;
-
+#![cfg(not(feature = "lib"))]
 
 use crate::api_utils::create_api_instance;
 use crate::config::{load_or_initialize, Configurable};

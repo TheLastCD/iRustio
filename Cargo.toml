@@ -5,18 +5,22 @@ edition = "2021"
 authors = ["The Last CD"]
 
 [dependencies]
-
-
 mpv = "0.2.3" # For media playback
-termion = "4.0.3" # For terminal input and output
+glib = "0.20.7"
+gstreamer = "0.23.4"
+gstreamer-base = "0.23.4"
+
+
 
 futures =  "0.3.31"
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
 toml = "0.5"
-rand = "0.8.4"
 radiobrowser = "0.6.1"
 chrono = "0.4"
+reqwest = "0.12.12"
 
 
-
+[lib]
+name = "i_rustio"
+crate-type = ["cdylib", "rlib"]
+#crate-type = ["rlib", "dylib"]  # Adjust as needed

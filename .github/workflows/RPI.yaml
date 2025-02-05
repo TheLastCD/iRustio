@@ -20,6 +20,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y gcc-aarch64-linux-gnu
+        sudo apt-get install -y libssl-dev:arm64
 
     - name: Install GStreamer development packages
       run: sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev

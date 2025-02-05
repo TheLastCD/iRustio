@@ -7,21 +7,31 @@ i'm terrible at coming up with them so please have a better idea
 ## Can I Contribute
 Yes!!! my rust knowledge and syntax is not the best so any suggestions in the form of a PR are much appreciated
 
-# Install
+# Backends
+iRustio supports the following backends:
+  - MPV (default)
+  - GStreamer
+Change backend by modifying the Config.toml file created intitial startup
 
+# Install
+Mac OS:
 TODO
 
 
 # Project Milestones
 
 ## General Milestones
--[x] Produce a working radion stream using the RadioBrowser API
+-[x] Produce a working iRadio stream using the RadioBrowser API
 
 -[x] Enable name querying for available streams
 
 -[x] Add support for browsing available tags
 
--[] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted **in Progress**
+-[?] Store/ cache streams so we don't need to call them everytime a query is made/ app is restarted 
+  - implemented the following:
+    - Storing of presets
+    - Recently played stations
+  - Current API speeds doesn't really warrent more forms of caching but maybe needed later down the line
 
 
 -[] Add support for user favourites
@@ -33,7 +43,9 @@ TODO
 ## Stretch Goals/ Sidetracks
 -[] Create a module for termusic to add native radio streams
 
--[] Add support for different audio backends (if necassery)
+-[x] Add support for different audio backends (see above)
+
+-[] Include metadata from radio station where available
 
 -[] Speed up API calls where possible
 
